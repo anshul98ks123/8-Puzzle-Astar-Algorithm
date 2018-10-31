@@ -1,6 +1,6 @@
 from graphics import *
 
-f = open('data.txt', 'r')
+f = open('data2.txt', 'r')
 
 initial_state = [x for x in f.readline().split(' ')][:9]
 final_state = [x for x in f.readline().split(' ')][:9]
@@ -8,8 +8,8 @@ final_state = [x for x in f.readline().split(' ')][:9]
 order_nielson = [0, 1, 2, 5, 8, 7, 6, 3]
 possible_moves = [-1, 1, -3, 3]
 
-win = GraphWin("My Window",1000,1000)
-win.setBackground('black')
+win = GraphWin("My Window",1300,1000)
+win.setBackground('white')
 
 def clear(win):
   for item in win.items[:]:
@@ -17,11 +17,44 @@ def clear(win):
   win.update()
 
 def initText(iter):
-  txt = Text(Point(470,100),"Iteration: ")
-  txt.setTextColor('white')
+  if iter==-1:
+    txt = Text(Point(470,70),"UNSOLVABLE!")
+    txt.setTextColor('black')
+    txt.setSize(22)
+    txt.setStyle('bold')
+    txt.setFace("courier")
+    txt.draw(win)
+
+  else:
+    txt = Text(Point(470,70),"Iteration: ")
+    txt.setTextColor('black')
+    txt.setSize(22)
+    txt.setStyle('bold')
+    txt.setFace("courier")
+    txt.draw(win)
+
+    txt = Text(Point(565,70),iter)
+    txt.setTextColor('black')
+    txt.setStyle('bold')
+    txt.setSize(22)
+    txt.draw(win)
+
+  txt = Text(Point(220,170),"Current")
+  txt.setTextColor('black')
+  txt.setStyle('bold')
+  txt.setSize(22)
   txt.draw(win)
-  txt = Text(Point(510,100),iter)
-  txt.setTextColor('white')
+
+  txt = Text(Point(720,170),"Final")
+  txt.setTextColor('black')
+  txt.setStyle('bold')
+  txt.setSize(22)
+  txt.draw(win)
+
+  txt = Text(Point(470,550),"8 PUZZLE SIMULATION")
+  txt.setTextColor('black')
+  txt.setStyle('bold')
+  txt.setSize(24)
   txt.draw(win)
 
 def drawPuzzle(current_state,x0,y0):
@@ -31,11 +64,17 @@ def drawPuzzle(current_state,x0,y0):
     drawCol = Rectangle(Point(x0+i*d,y0),Point(x0+i*d+d,y0+3*d))
     drawCol.setOutline('red')
     drawCol.draw(win)
+    drawCol = Rectangle(Point(x0+i*d+1,y0+1),Point(x0+i*d+d+1,y0+3*d+1))
+    drawCol.setOutline('red')
+    drawCol.draw(win)
 
   for i in range(3):
     drawRow = Rectangle(Point(x0,y0+i*d),Point(x0+3*d,y0+i*d+d))
     drawRow.setOutline('red')
     drawRow.draw(win)
+    drawCol = Rectangle(Point(x0+i*d+1,y0+1),Point(x0+i*d+d+1,y0+3*d+1))
+    drawCol.setOutline('red')
+    drawCol.draw(win)
 
   iniX = x0+d/2
   iniY = y0+d/2
@@ -45,13 +84,17 @@ def drawPuzzle(current_state,x0,y0):
     X = iniX+(count%3)*d
     Y = iniY+(count//3)*d
     txt = Text(Point(X,Y),i)
-    txt.setTextColor('white')
+    txt.setTextColor('black')
+    txt.setSize(22)
+    txt.setStyle('bold')
     txt.draw(win)
     count += 1
 
-def drawConfiguration(current_state,final_state,iter):
+def drawConfiguration(current_state,final_state,iter,unsolvable):
   clear(win)
 
+  if unsolvable:
+    iter = -1
   initText(iter)
 
   x0 = 100
@@ -141,16 +184,19 @@ def showSolution(initial_state, final_state, Parent):
   Path.reverse()
   for state in Path:
     print("\n",list(state))
-    drawConfiguration(state,final_state,iteration)
+    drawConfiguration(state,final_state,iteration,False)
     iteration += 1
     time.sleep(1)
+  
+  time.sleep(10)
 
 def Astar(initial_state, final_state):
   print("final  =  ", final_state)
   print("initial = ", initial_state)
 
   if not Solvable(initial_state, final_state):
-    print("\nProblem unsolvable")
+    drawConfiguration(initial_state,final_state,-1,True)
+    time.sleep(5)
     return
 
   Parent = {}
