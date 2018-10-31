@@ -56,16 +56,38 @@ def FindBest(Open):
   
   return best
 
+def Solvable(initial_state, final_state):
+  finalPos = {}
+
+  for i in range(9):
+    finalPos[final_state[i]] = i
+
+  inversions = 0
+
+  for i in range(8):
+    for j in range(i+1, 8):
+      if finalPos[initial_state[i]] > finalPos[initial_state[j]]:
+        inversions += 1
+
+  return (inversions % 2 == 0)
+
 def Astar(initial_state, final_state):
-  print("final =   ", final_state)
+  print("final  =  ", final_state)
+  print("initial = ", initial_state)
+
+  if not Solvable(initial_state, final_state):
+    print("\nProblem unsolvable")
+    return
 
   current_state = initial_state
   current_perm = "".join(initial_state)
 
   Open = [current_perm]
   Closed = []
+  iteration = 0
 
   while len(Open) > 0:
+    iteration += 1
     index = FindBest(Open)
 
     current_state = list(Open[index])
@@ -100,5 +122,3 @@ def Astar(initial_state, final_state):
   print("Final state reached = ", current_state)
 
 Astar(initial_state, final_state)
-
-
