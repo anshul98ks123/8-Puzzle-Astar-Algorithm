@@ -18,6 +18,7 @@ def heuristic(current_state):
   finalMap = {}
   finalPos = {}
   
+  # calculate S(n)
   for i, index in enumerate(order_nielson):
     nextIndex = order_nielson[(i + 1) % 8]
     finalMap[final_state[index]] = final_state[nextIndex]
@@ -65,7 +66,6 @@ def Astar(initial_state, final_state):
   Closed = []
 
   while len(Open) > 0:
-    print("\nOpen = ", Open)
     index = FindBest(Open)
 
     current_state = list(Open[index])
@@ -77,9 +77,10 @@ def Astar(initial_state, final_state):
     empty_pos = current_state.index("_")
 
     # YEH PRINT KRNA HAI 
+    print("\nheuristic = ", heuristic(current_state))
     print("current = ", current_state)
 
-    if current_cost == 0:
+    if "".join(current_state) == "".join(final_state):
       break
     
     for i in possible_moves:
@@ -92,7 +93,6 @@ def Astar(initial_state, final_state):
       temp_state[empty_pos], temp_state[newpos] = temp_state[newpos], temp_state[empty_pos]
       temp_perm = "".join(temp_state)
 
-      print(temp_perm)
       if (temp_perm not in Closed) and (temp_perm not in Open):
         Open.append(temp_perm)
     
