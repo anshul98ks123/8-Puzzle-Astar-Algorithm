@@ -1,69 +1,15 @@
-from graphics import *
-
 f = open('data.txt', 'r')
 
 initial_state = [x for x in f.readline().split(' ')][:9]
 final_state = [x for x in f.readline().split(' ')][:9]
 
-order_nielson = [0, 1, 2, 5, 8, 7, 6, 3]
-possible_moves = [-1, 1, -3, 3]
-
-win = GraphWin("My Window",1000,1000)
-win.setBackground('black')
-
-def clear(win):
-  for item in win.items[:]:
-    item.undraw()
-  win.update()
-
-def initText(iter):
-  txt = Text(Point(470,100),"Iteration: ")
-  txt.setTextColor('white')
-  txt.draw(win)
-  txt = Text(Point(510,100),iter)
-  txt.setTextColor('white')
-  txt.draw(win)
-
-def drawPuzzle(current_state,x0,y0):
-  d = 80
-
-  for i in range(3):
-    drawCol = Rectangle(Point(x0+i*d,y0),Point(x0+i*d+d,y0+3*d))
-    drawCol.setOutline('red')
-    drawCol.draw(win)
-
-  for i in range(3):
-    drawRow = Rectangle(Point(x0,y0+i*d),Point(x0+3*d,y0+i*d+d))
-    drawRow.setOutline('red')
-    drawRow.draw(win)
-
-  iniX = x0+d/2
-  iniY = y0+d/2
-  count = 0
-
-  for i in current_state:
-    X = iniX+(count%3)*d
-    Y = iniY+(count//3)*d
-    txt = Text(Point(X,Y),i)
-    txt.setTextColor('white')
-    txt.draw(win)
-    count += 1
-
-def drawConfiguration(current_state,final_state,iter):
-  clear(win)
-
-  initText(iter)
-
-  x0 = 100
-  y0 = 200
-
-  drawPuzzle(current_state,x0,y0)
-  drawPuzzle(final_state,x0+500,y0)
-
 def manhattenDist(position1, position2):
   dx = int(abs(position1 - position2) / 3)
   dy = abs(position1 % 3 - position2 % 3)
   return dx + dy;
+
+order_nielson = [0, 1, 2, 5, 8, 7, 6, 3]
+possible_moves = [-1, 1, -3, 3]
 
 def heuristic(current_state):
   Sn = int(current_state[4] != "_")
@@ -125,43 +71,25 @@ def Solvable(initial_state, final_state):
 
   return (inversions % 2 == 0)
 
-def showSolution(initial_state, final_state, Parent):
-  t = final_state
-  Path = []
-
-  while True:
-    Path.append(t)
-
-    if "".join(initial_state) == "".join(t):
-      break
-    
-    t = Parent["".join(t)]
-
-  iteration = 1
-  Path.reverse()
-  for state in Path:
-    print("\n",list(state))
-    drawConfiguration(state,final_state,iteration)
-    iteration += 1
-    time.sleep(1)
-
 def Astar(initial_state, final_state):
   print("final  =  ", final_state)
   print("initial = ", initial_state)
 
+  Parent = {}
+
   if not Solvable(initial_state, final_state):
     print("\nProblem unsolvable")
     return
-
-  Parent = {}
 
   current_state = initial_state
   current_perm = "".join(initial_state)
 
   Open = [current_perm]
   Closed = []
+  iteration = 0
 
   while len(Open) > 0:
+    iteration += 1
     index = FindBest(Open)
 
     current_state = list(Open[index])
@@ -170,6 +98,9 @@ def Astar(initial_state, final_state):
     Closed.append("".join(current_state))
 
     empty_pos = current_state.index("_")
+
+    print("\nheuristic = ", heuristic(current_state))
+    print("current = ", current_state)
 
     if "".join(current_state) == "".join(final_state):
       break
@@ -191,9 +122,17 @@ def Astar(initial_state, final_state):
         Open.append(temp_perm)
         Parent[temp_perm] = "".join(current_state)
     
+  print("\nPATH: \n")
+  t = current_state
+  while True:
+    print(t)
+
+    if "".join(current_state) == "".join(initial_state):
+      break
+    else:
+      t = Parent["".join(t)]
+
   print("\nFinal state needed = ", final_state)
   print("Final state reached = ", current_state)
-
-  showSolution(initial_state, current_state, Parent)
 
 Astar(initial_state, final_state)
