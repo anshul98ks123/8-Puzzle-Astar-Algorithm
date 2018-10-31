@@ -1,7 +1,61 @@
+from graphics import *
+
 f = open('data.txt', 'r')
 
 initial_state = [x for x in f.readline().split(' ')][:9]
 final_state = [x for x in f.readline().split(' ')][:9]
+
+win = GraphWin("My Window",1000,1000)
+win.setBackground('black')
+
+def clear(win):
+  for item in win.items[:]:
+    item.undraw()
+  win.update()
+
+def initText(iter):
+  txt = Text(Point(470,100),"Iteration: ")
+  txt.setTextColor('white')
+  txt.draw(win)
+  txt = Text(Point(510,100),iter)
+  txt.setTextColor('white')
+  txt.draw(win)
+
+def drawPuzzle(current_state,x0,y0):
+  d = 80
+
+  for i in range(3):
+    drawCol = Rectangle(Point(x0+i*d,y0),Point(x0+i*d+d,y0+3*d))
+    drawCol.setOutline('white')
+    drawCol.draw(win)
+
+  for i in range(3):
+    drawRow = Rectangle(Point(x0,y0+i*d),Point(x0+3*d,y0+i*d+d))
+    drawRow.setOutline('white')
+    drawRow.draw(win)
+
+  iniX = x0+d/2
+  iniY = y0+d/2
+  count = 0
+
+  for i in current_state:
+    X = iniX+(count%3)*d
+    Y = iniY+(count//3)*d
+    txt = Text(Point(X,Y),i)
+    txt.setTextColor('white')
+    txt.draw(win)
+    count += 1
+
+def drawConfiguration(current_state,final_state,iter):
+  clear(win)
+
+  initText(iter)
+
+  x0 = 100
+  y0 = 200
+
+  drawPuzzle(current_state,x0,y0)
+  drawPuzzle(final_state,x0+500,y0)
 
 def manhattenDist(position1, position2):
   dx = int(abs(position1 - position2) / 3)
@@ -100,6 +154,8 @@ def Astar(initial_state, final_state):
 
     print("\nheuristic = ", heuristic(current_state))
     print("current = ", current_state)
+    drawConfiguration(current_state,final_state,iteration)
+    time.sleep(1)
 
     if "".join(current_state) == "".join(final_state):
       break
