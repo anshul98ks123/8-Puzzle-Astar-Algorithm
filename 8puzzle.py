@@ -98,7 +98,6 @@ def Astar(initial_state, final_state):
 
     empty_pos = current_state.index("_")
 
-    # YEH PRINT KRNA HAI 
     print("\nheuristic = ", heuristic(current_state))
     print("current = ", current_state)
 
@@ -109,7 +108,10 @@ def Astar(initial_state, final_state):
       temp_state = current_state.copy()
       newpos = empty_pos + i
 
-      if(newpos < 0 or newpos >= 9):
+      if abs(i) == 1 and int(newpos/3) != int(empty_pos/3):
+        continue
+
+      if newpos < 0 or newpos >= 9:
         continue
 
       temp_state[empty_pos], temp_state[newpos] = temp_state[newpos], temp_state[empty_pos]
