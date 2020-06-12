@@ -20,7 +20,7 @@ python 8puzzle.py
 ```
 
 
-Sample Output 1:
+Sample Output 1: <br>
 ![Output 1](output/simulation.gif)
 
 Sample Output 2:
