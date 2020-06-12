@@ -26,4 +26,4 @@ Sample Output 1:
 Sample Output 2:
 ![Output 2](output/Figure_1.png)
 
-Created is made by me and [Pranav Gupta](https://github.com/foobar98)
+Created by me and [Pranav Gupta](https://github.com/foobar98)
